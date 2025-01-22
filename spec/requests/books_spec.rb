@@ -6,7 +6,7 @@ RSpec.describe "Books API", type: :request do
   describe "POST /books" do
     it "creates a book" do
       book_params = { title: "Harry Potter", author_id: author.id, publication_date: "2000-07-08" }
-      post "/books", params: { book: book_params }  
+      post "/books", params: { book: book_params }
       expect(response).to have_http_status(:created)
       expect(JSON.parse(response.body)["title"]).to eq("Harry Potter")
     end
@@ -17,7 +17,7 @@ RSpec.describe "Books API", type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(JSON.parse(response.body)["publication_date"]).to include("must be in the past or today")
     end
-    
+
   end
 
   describe "GET /books" do

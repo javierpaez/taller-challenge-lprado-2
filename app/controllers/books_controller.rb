@@ -3,11 +3,11 @@ class BooksController < ApplicationController
 
   # GET /books
   def index
-    @books = Book.all.order(rating: :desc, publication_date: :desc)
+    @books = Book.includes(:author).order(rating: :desc, publication_date: :desc)
     @books = @books.map do |book|
       { id:book.id, title: book.title, author_name: book.author.name }
     end
-    
+
     render json: @books
   end
 
@@ -43,14 +43,14 @@ class BooksController < ApplicationController
 
   # Report books
   def generate_report
-    books = Book.all
+    books = Book.includes(author: :books)
     report = []
 
     books.each do |book|
       author = book.author
-      total_books = author.books.count
+      total_books = author.books.size
       highest_rated_book = author.books.order(rating: :desc).first
-      published_last_year = author.books.where('publication_date >= ?', 1.year.ago).count
+      published_last_year = author.books.where('publication_date >= ?', 1.year.ago).size
 
       report << {
         book_title: book.title,
