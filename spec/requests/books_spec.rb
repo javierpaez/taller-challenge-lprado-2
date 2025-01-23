@@ -50,4 +50,21 @@ RSpec.describe "Books API", type: :request do
         expect(parsed_response['report']).to be_an(Array)
     end
   end
+
+  describe "POST /book/:id/reserve" do
+    let(:book) do
+      Book.create!(title: "Book 1", author_id: author.id, publication_date: 3.days.ago, status: :available)
+    end
+
+    it "reserves an available book" do
+      email = 'john.doe@gmail.com'
+
+      post "/books/#{book.id}/reserve", params: { email: email }
+      parsed_response = JSON.parse(response.body)
+
+      expect(response.status).to eq(200)
+      expect(parsed_response["reserved_by"]).to eq('john.doe@gmail.com')
+      expect(parsed_response["status"]).to match("reserved")
+    end
+  end
 end

@@ -66,6 +66,19 @@ class BooksController < ApplicationController
     render json: { report: report, generated_at: Time.now.to_s }
   end
 
+  def reserve
+    @book = Book.find(params.expect(:id))
+
+    if @book.available?
+      @book.reserve params.expect(:email)
+      @book.save!
+
+      render json: @book
+    else
+      render json: { error: "Book not available for reserve.", book: @book }, status: :unprocessable_entity
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_book
